@@ -28,23 +28,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { signOut, user } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState<boolean>(false);
   const [restaurantName, setRestaurantName] = useState<string>("Your Menu");
-  const [restaurantSlug, setRestaurantSlug] = useState<string>("demo");
   const [restaurantAddress, setRestaurantAddress] = useState<string>("");
-  const [restaurantPhone, setRestaurantPhone] = useState<string>("");
 
   useEffect(() => {
     const loadRestaurant = async () => {
       if (!user) return;
       const { data } = await supabase
         .from("restaurants")
-        .select("name, slug, address, phone")
+        .select("name, address")
         .eq("owner_id", user.id)
         .maybeSingle();
       if (!data) return;
       setRestaurantName(data.name);
-      setRestaurantSlug(data.slug);
       setRestaurantAddress(data.address ?? "");
-      setRestaurantPhone(data.phone ?? "");
     };
     void loadRestaurant();
   }, [supabase, user]);

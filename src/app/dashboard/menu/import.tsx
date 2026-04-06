@@ -44,7 +44,6 @@ export default function ImportCSV({ restaurantId, onImportComplete }: { restaura
       const categoriesSet = new Set<string>();
       const parsedItems = dataLines.map(line => {
         // Regex to handle basic comma splitting ignoring commas inside quotes
-        const match = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
         const cols = line.split(","); // keeping it simple for now as requested
         
         const row: Record<string, string> = {};
@@ -97,8 +96,8 @@ export default function ImportCSV({ restaurantId, onImportComplete }: { restaura
 
       toast.success(`Imported ${itemsToInsert.length} items securely!`, { id: "csv" });
       onImportComplete();
-    } catch (err: any) {
-      toast.error(err.message || "Failed to process CSV", { id: "csv" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to process CSV", { id: "csv" });
     } finally {
       setIsImporting(false);
       e.target.value = ""; // reset input

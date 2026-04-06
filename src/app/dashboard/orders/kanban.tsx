@@ -45,7 +45,7 @@ export default function OrdersKanban({ initialOrders, restaurantId }: { initialO
           table: "orders",
           filter: `restaurant_id=eq.${restaurantId}`,
         },
-        async (payload: any) => {
+        async (payload: { eventType: string; new: unknown; old: unknown }) => {
           if (payload.eventType === "INSERT") {
             const newOrder = payload.new as LiveOrder;
             // Fetch its items because they just got inserted too
@@ -59,12 +59,12 @@ export default function OrdersKanban({ initialOrders, restaurantId }: { initialO
                 .single();
                 
               if (data) {
-                const fetchedOrder = data as any;
+                const fetchedOrder = data as unknown as LiveOrder;
                 // Play sound
                 try {
                   const audio = new Audio("/order-ding.mp3");
                   audio.play().catch(() => {});
-                } catch (e) {}
+                } catch {}
 
                 setOrders((prev) => [fetchedOrder as LiveOrder, ...prev.filter(o => o.id !== fetchedOrder.id)]);
                 toast.success(`New order on Table ${fetchedOrder.table_code || "—"}`);
@@ -72,8 +72,9 @@ export default function OrdersKanban({ initialOrders, restaurantId }: { initialO
             }, 500);
             
           } else if (payload.eventType === "UPDATE") {
+            const updatedOrder = payload.new as Record<string, unknown>;
             setOrders((prev) =>
-              prev.map((o) => (o.id === payload.new.id ? { ...o, status: payload.new.status } : o))
+              prev.map((o) => (o.id === updatedOrder.id ? { ...o, status: updatedOrder.status as LiveOrder["status"] } : o))
             );
           }
         }
@@ -87,7 +88,7 @@ export default function OrdersKanban({ initialOrders, restaurantId }: { initialO
 
   const updateStatus = async (orderId: string, newStatus: string) => {
     // Optimistic
-    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus as any } : o)));
+    setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus as LiveOrder["status"] } : o)));
     
     const res = await fetch(`/api/orders/${orderId}/status`, {
       method: "PATCH",

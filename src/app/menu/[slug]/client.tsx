@@ -199,7 +199,7 @@ export default function PublicMenuClient({ items, restaurant }: PublicMenuClient
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <div className="flex items-center gap-2 mb-4 px-1">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Chef's Recommendations</h2>
+                <h2 className="font-display text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Chef&apos;s Recommendations</h2>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {filtered.filter((item) => item.isFeatured).map((item) => (

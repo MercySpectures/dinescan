@@ -102,7 +102,7 @@ export default function QrPage() {
       URL.revokeObjectURL(url);
       
       toast.success("ZIP Downloaded!", { id: "zip" });
-    } catch (e) {
+    } catch {
       toast.error("Failed to generate ZIP", { id: "zip" });
     } finally {
       setIsLoading(false);
