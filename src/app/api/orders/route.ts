@@ -3,6 +3,11 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createOrderSchema } from "@/lib/validations/orders";
 
 export async function POST(request: NextRequest) {
+  // Diagnostic: check if service role key is present
+  const srkPresent = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const srkRole = srkPresent ? (() => { try { return JSON.parse(atob(process.env.SUPABASE_SERVICE_ROLE_KEY!.split('.')[1])).role; } catch { return 'parse-failed'; } })() : 'missing';
+  console.log(`[orders] Service Role Key present: ${srkPresent}, role claim: ${srkRole}`);
+  
   const supabase = createAdminClient();
   
   try {
@@ -84,6 +89,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (orderError || !order) {
+      console.error("[orders] Order insert failed:", JSON.stringify(orderError));
       return NextResponse.json({ error: orderError?.message ?? "Failed to create order" }, { status: 500 });
     }
 
