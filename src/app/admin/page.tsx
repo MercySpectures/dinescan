@@ -63,7 +63,7 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
                   <li>Go to <strong>API</strong> in the settings menu.</li>
                   <li>Scroll down to <strong>Project API keys</strong>.</li>
                   <li>Find the key named <strong className="text-pink-600">service_role (secret)</strong> and click <strong>Copy</strong>.</li>
-                  <li>Open your project's <code className="bg-white px-1 py-0.5 rounded shadow-sm">.env.local</code> file.</li>
+                  <li>Open your project&apos;s <code className="bg-white px-1 py-0.5 rounded shadow-sm">.env.local</code> file.</li>
                   <li>Replace the value of <code className="bg-white px-1 py-0.5 rounded shadow-sm">SUPABASE_SERVICE_ROLE_KEY</code> with your copied secret key.</li>
                   <li>Restart your Next.js development server (<code className="bg-white px-1 py-0.5 rounded shadow-sm">npm run dev</code>).</li>
                 </ol>
