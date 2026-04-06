@@ -1,0 +1,7 @@
+processing: FAILED
+delivered: FAILED
+shipped: FAILED
+active: FAILED
+inactive: FAILED
+pending_payment: FAILED
+draft: SUCCESS

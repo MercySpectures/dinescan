@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-[#F9FAFB] text-slate-800 font-body antialiased;
+}
+
+/* Hide scrollbar globally */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+::selection {
+  @apply bg-primary/20 text-primary;
+}
+
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@layer components {
+
+  /* Premium interactive buttons */
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-hover text-white shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.23)] disabled:shadow-none hover:-translate-y-[1px] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-5 py-2.5 text-sm font-semibold font-display tracking-wide transition-all duration-200 border border-transparent;
+  }
+
+  .btn-outline {
+    @apply bg-white/50 backdrop-blur-md border border-slate-200 text-slate-700 hover:border-primary hover:text-primary hover:bg-white hover:shadow-glass-sm hover:-translate-y-[1px] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-5 py-2.5 text-sm font-semibold font-display tracking-wide transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200;
+  }
+
+  /* Inputs \\& Form */
+  .input {
+    @apply bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 w-full outline-none transition-all duration-200 placeholder:text-slate-400;
+  }
+
+  /* Glassmorphism Cards */
+  .card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-card rounded-2xl relative overflow-hidden;
+  }
+
+
+  /* Badges */
+  .badge-veg {
+    @apply bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] uppercase tracking-wider font-bold px-2.5 py-0.5;
+  }
+
+  .badge-nonveg {
+    @apply bg-red-50 text-red-700 border border-red-200 rounded-full text-[11px] uppercase tracking-wider font-bold px-2.5 py-0.5;
+  }
+
+  /* Typography */
+  .page-title {
+    @apply font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight;
+  }
+
+  /* Skeleton Loading */
+  .skeleton {
+    @apply animate-pulse rounded-xl bg-slate-200/60;
+  }
+}
