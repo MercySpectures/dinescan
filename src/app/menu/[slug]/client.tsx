@@ -35,14 +35,7 @@ interface PublicMenuClientProps {
   restaurant: RestaurantMeta;
 }
 
-interface CartItem {
-  key: string;
-  itemId: string;
-  name: string;
-  price: number;
-  qty: number;
-  note: string;
-}
+
 
 export default function PublicMenuClient({ items, restaurant }: PublicMenuClientProps) {
   const [query, setQuery] = useState<string>("");
