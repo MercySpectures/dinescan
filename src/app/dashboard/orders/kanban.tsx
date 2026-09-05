@@ -81,8 +81,22 @@ export default function OrdersKanban({ initialOrders, restaurantId }: { initialO
       )
       .subscribe();
 
+    // Auto-polling fallback for high reliability
+    const interval = setInterval(async () => {
+      const { data } = await supabase
+        .from("orders")
+        .select(`id, table_code, status, total, created_at, items:order_items(name, qty, price, note)`)
+        .eq("restaurant_id", restaurantId)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (data) {
+        setOrders(data as unknown as LiveOrder[]);
+      }
+    }, 10000);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, [restaurantId, supabase]);
 

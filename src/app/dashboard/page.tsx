@@ -41,6 +41,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   if (!analytics) redirect("/auth/register");
 
   const restaurant = analytics.restaurant;
+
+  const { data: subscription } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .eq("restaurant_id", restaurant.id)
+    .maybeSingle();
+
+  const planName = (subscription?.plan || "free").toUpperCase();
+  const maxTables = subscription?.max_tables || 10;
+  const maxItems = subscription?.max_menu_items || 50;
+
   const series = analytics.series;
   const recentScans = analytics.recentScans;
   const topItems = analytics.topItems;
@@ -51,14 +62,23 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-navy-950 via-slate-900 to-navy-900 p-6 rounded-2xl text-white shadow-xl">
         <div>
-          <h1 className="page-title">Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-500">{restaurant.name}</p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold font-display">{restaurant.name}</h1>
+            <span className="px-3 py-1 text-xs font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full tracking-wider">
+              {planName} PLAN
+            </span>
+          </div>
+          <p className="text-xs text-slate-300 mt-1">
+            Table Limit: {maxTables} Tables • Item Limit: {maxItems} Items • Status: {subscription?.status || "Active"}
+          </p>
         </div>
-        <Link className="btn-outline" href={`/menu/${restaurant.slug}`}>
-          View Live Menu
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link className="btn-primary bg-emerald-500 hover:bg-emerald-600 border-none text-xs" href={`/menu/${restaurant.slug}`}>
+            View Live Menu &rarr;
+          </Link>
+        </div>
       </div>
 
       <div className="card p-4">

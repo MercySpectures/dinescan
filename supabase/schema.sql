@@ -80,6 +80,37 @@ create table if not exists public.order_items (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  restaurant_id uuid not null references public.restaurants(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  plan text not null default 'free' check (plan in ('free', 'starter', 'pro', 'enterprise')),
+  status text not null default 'active' check (status in ('active', 'trialing', 'past_due', 'canceled', 'suspended')),
+  billing_cycle text not null default 'monthly' check (billing_cycle in ('monthly', 'annual')),
+  amount numeric(10,2) not null default 0,
+  currency text not null default 'INR',
+  current_period_start timestamptz not null default now(),
+  current_period_end timestamptz not null default (now() + interval '30 days'),
+  max_tables int not null default 10,
+  max_menu_items int not null default 50,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (restaurant_id)
+);
+
+-- Performance Indexes for Scalability (1000+ Users)
+create index if not exists idx_restaurants_owner_id on public.restaurants(owner_id);
+create index if not exists idx_restaurants_slug on public.restaurants(slug);
+create index if not exists idx_categories_restaurant_id on public.categories(restaurant_id);
+create index if not exists idx_menu_items_restaurant_id on public.menu_items(restaurant_id);
+create index if not exists idx_menu_items_category_id on public.menu_items(category_id);
+create index if not exists idx_orders_restaurant_id_status on public.orders(restaurant_id, status);
+create index if not exists idx_orders_created_at on public.orders(created_at desc);
+create index if not exists idx_order_items_order_id on public.order_items(order_id);
+create index if not exists idx_scan_events_restaurant_id on public.scan_events(restaurant_id, scanned_at desc);
+create index if not exists idx_subscriptions_user_id on public.subscriptions(user_id);
+create index if not exists idx_subscriptions_status on public.subscriptions(status);
+
 alter table public.restaurants enable row level security;
 alter table public.categories enable row level security;
 alter table public.menu_items enable row level security;
@@ -87,6 +118,7 @@ alter table public.scan_events enable row level security;
 alter table public.restaurant_memberships enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+alter table public.subscriptions enable row level security;
 
 drop policy if exists "restaurants_owner_crud" on public.restaurants;
 create policy "restaurants_owner_crud" on public.restaurants
@@ -307,3 +339,12 @@ using (
     select id::text from public.restaurants where owner_id = auth.uid()
   )
 );
+
+drop policy if exists "subscriptions_owner_read" on public.subscriptions;
+create policy "subscriptions_owner_read" on public.subscriptions
+for select using (user_id = auth.uid());
+
+drop policy if exists "subscriptions_owner_crud" on public.subscriptions;
+create policy "subscriptions_owner_crud" on public.subscriptions
+for all using (user_id = auth.uid()) with check (user_id = auth.uid());
+

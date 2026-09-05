@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { updateOrderStatusSchema } from "@/lib/validations/orders";
 
 export async function PATCH(
@@ -39,10 +39,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Order not found or access denied" }, { status: 404 });
     }
 
-    const adminSupabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const adminSupabase = createAdminClient();
 
     const { data: updatedOrder, error: updateError } = await adminSupabase
       .from("orders")

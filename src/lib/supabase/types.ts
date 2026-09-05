@@ -217,6 +217,53 @@ export interface Database {
         };
         Relationships: [];
       };
+      subscriptions: {
+        Row: {
+          id: string;
+          restaurant_id: string;
+          user_id: string;
+          plan: "free" | "starter" | "pro" | "enterprise";
+          status: "active" | "trialing" | "past_due" | "canceled" | "suspended";
+          billing_cycle: "monthly" | "annual";
+          amount: number;
+          currency: string;
+          current_period_start: string;
+          current_period_end: string;
+          max_tables: number;
+          max_menu_items: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          restaurant_id: string;
+          user_id: string;
+          plan?: "free" | "starter" | "pro" | "enterprise";
+          status?: "active" | "trialing" | "past_due" | "canceled" | "suspended";
+          billing_cycle?: "monthly" | "annual";
+          amount?: number;
+          currency?: string;
+          current_period_start?: string;
+          current_period_end?: string;
+          max_tables?: number;
+          max_menu_items?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          plan?: "free" | "starter" | "pro" | "enterprise";
+          status?: "active" | "trialing" | "past_due" | "canceled" | "suspended";
+          billing_cycle?: "monthly" | "annual";
+          amount?: number;
+          currency?: string;
+          current_period_start?: string;
+          current_period_end?: string;
+          max_tables?: number;
+          max_menu_items?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
