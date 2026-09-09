@@ -11,6 +11,9 @@ create table if not exists public.restaurants (
   phone text,
   is_published boolean not null default false,
   theme_color text default '#22C55E',
+  gst_number text,
+  gst_rate numeric(5,2) default 5.00,
+  enable_gst boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -51,9 +54,20 @@ create table if not exists public.restaurant_memberships (
   id uuid primary key default gen_random_uuid(),
   restaurant_id uuid not null references public.restaurants(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
-  role text not null check (role in ('manager', 'viewer')),
+  role text not null check (role in ('manager', 'viewer', 'kitchen', 'waiter', 'cashier')),
   created_at timestamptz not null default now(),
   unique (restaurant_id, user_id)
+);
+
+create table if not exists public.tables (
+  id uuid primary key default gen_random_uuid(),
+  restaurant_id uuid not null references public.restaurants(id) on delete cascade,
+  table_number text not null,
+  capacity int not null default 4,
+  status text not null default 'vacant' check (status in ('vacant', 'occupied', 'billing', 'reserved')),
+  current_order_id uuid references public.orders(id) on delete set null,
+  created_at timestamptz not null default now(),
+  unique (restaurant_id, table_number)
 );
 
 create table if not exists public.orders (

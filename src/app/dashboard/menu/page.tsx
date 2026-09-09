@@ -65,18 +65,66 @@ export default function MenuBuilderPage() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     const {
-      data: { user }
-    } = await supabase.auth.getUser();
+      data: { session }
+    } = await supabase.auth.getSession();
+    const user = session?.user;
     if (!user) {
       setIsLoading(false);
       return;
     }
 
-    const { data: restaurant } = await supabase
-      .from("restaurants")
-      .select("id")
-      .eq("owner_id", user.id)
-      .maybeSingle();
+    // 0. Extract candidate slug from URL pathname first (e.g. /silsila/dashboard/menu)
+    const pathParts = typeof window !== "undefined" ? window.location.pathname.split("/").filter(Boolean) : [];
+    const urlSlug = pathParts[0] && !["dashboard", "admin", "auth", "api", "onboarding"].includes(pathParts[0]) ? pathParts[0] : null;
+
+    let restaurant: { id: string } | null = null;
+
+    if (urlSlug) {
+      const { data: bySlug } = await supabase
+        .from("restaurants")
+        .select("id")
+        .eq("slug", urlSlug)
+        .maybeSingle();
+      if (bySlug) {
+        restaurant = bySlug;
+        localStorage.setItem("dinescan_active_restaurant_id", bySlug.id);
+      }
+    }
+
+    const activeId = !restaurant ? localStorage.getItem("dinescan_active_restaurant_id") : null;
+
+    if (!restaurant && activeId) {
+      const { data: pref } = await supabase
+        .from("restaurants")
+        .select("id")
+        .eq("id", activeId)
+        .maybeSingle();
+      if (pref) restaurant = pref;
+    }
+
+    if (!restaurant) {
+      const { data: ownerRests } = await supabase
+        .from("restaurants")
+        .select("id")
+        .eq("owner_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (ownerRests && ownerRests.length > 0) {
+        restaurant = ownerRests[0];
+        localStorage.setItem("dinescan_active_restaurant_id", ownerRests[0].id);
+      }
+    }
+
+    if (!restaurant) {
+      const { data: firstRest } = await supabase
+        .from("restaurants")
+        .select("id")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      restaurant = firstRest;
+    }
+
     if (!restaurant) {
       setIsLoading(false);
       return;
@@ -171,18 +219,21 @@ export default function MenuBuilderPage() {
       ) : null}
 
       {categories.map((category) => (
-        <section key={category.id} className="card p-4">
+        <section key={category.id} className="card p-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#111827]">
           <div className="flex items-center justify-between">
             <button
               type="button"
-              className="font-display text-left text-xl font-semibold"
+              className="font-display text-left text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors cursor-pointer"
               onClick={() =>
                 setOpenCategoryIds((prev) =>
                   prev.includes(category.id) ? prev.filter((id) => id !== category.id) : [...prev, category.id]
                 )
               }
             >
-              {category.name}
+              <span>{category.name}</span>
+              <span className="text-xs font-normal text-slate-400">
+                ({items.filter((item) => item.category_id === category.id).length} dishes)
+              </span>
             </button>
             <div className="flex gap-2">
               <button
@@ -197,7 +248,7 @@ export default function MenuBuilderPage() {
               </button>
               <button
                 type="button"
-                className="btn-ghost text-red-500"
+                className="btn-ghost text-red-500 hover:text-red-600"
                 onClick={async () => {
                   if (!window.confirm("Delete this category?")) return;
                   const { error } = await supabase.from("categories").delete().eq("id", category.id);
@@ -214,13 +265,13 @@ export default function MenuBuilderPage() {
             </div>
           </div>
 
-          <div className={`mt-4 space-y-2 ${openCategoryIds.includes(category.id) ? "block" : "hidden"}`}>
+          <div className={`mt-4 space-y-2.5 ${openCategoryIds.includes(category.id) ? "block" : "hidden"}`}>
             {items
               .filter((item) => item.category_id === category.id)
               .map((item) => (
                 <article
                   key={item.id}
-                  className={`flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-100 p-3 ${
+                  className={`flex flex-wrap items-center justify-between gap-4 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-[#0B101D] p-3 transition-colors ${
                     !item.is_available ? "opacity-50" : ""
                   }`}
                 >
@@ -230,18 +281,18 @@ export default function MenuBuilderPage() {
                       alt={item.name}
                       width={48}
                       height={48}
-                      className="h-12 w-12 rounded-lg object-cover"
+                      className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
                     />
                     <div>
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-sm text-gray-500">{item.description ?? ""}</p>
+                      <p className="font-semibold text-sm text-slate-900 dark:text-white">{item.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{item.description ?? ""}</p>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-3">
                     <span className={item.is_veg ? "badge-veg" : "badge-nonveg"}>
                       {item.is_veg ? "Veg" : "Non-veg"}
                     </span>
-                    <p className="text-sm font-semibold">{formatPrice(item.price)}</p>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{formatPrice(item.price)}</p>
                     <button
                       type="button"
                       className="btn-ghost"
@@ -314,9 +365,9 @@ export default function MenuBuilderPage() {
       ))}
 
       {showModal ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-navy-900/50 p-4">
-          <div className="card animate-scale-in w-full max-w-2xl p-6">
-            <h3 className="font-display text-xl font-semibold">{form.id ? "Edit item" : "Add item"}</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="card bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 animate-scale-in w-full max-w-2xl p-6 shadow-2xl">
+            <h3 className="font-display text-xl font-semibold text-slate-900 dark:text-white">{form.id ? "Edit item" : "Add item"}</h3>
             <div className="mt-4 space-y-3">
               <div className="grid gap-3 md:grid-cols-2">
                 <input
@@ -326,12 +377,12 @@ export default function MenuBuilderPage() {
                   onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
                 />
                 <select
-                  className="input"
+                  className="input bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100"
                   value={form.category_id}
                   onChange={(event) => setForm((prev) => ({ ...prev, category_id: event.target.value }))}
                 >
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.id} value={category.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                       {category.name}
                     </option>
                   ))}

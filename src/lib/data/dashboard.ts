@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getActiveRestaurant } from "./restaurant";
 
 export interface ScanPoint {
   date: string;
@@ -91,21 +92,18 @@ export function resolveDateRange(input: DateRangeInput): ResolvedDateRange {
 
 export async function getDashboardAnalytics(input: {
   ownerId: string;
+  slug?: string;
+  preferredRestaurantId?: string;
   rangeDays?: number;
   from?: string;
   to?: string;
   page: number;
   pageSize: number;
-}): Promise<DashboardAnalytics | null> {
+}): Promise<DashboardAnalytics> {
   const supabase = await createServerSupabaseClient();
-  const { ownerId, page, pageSize } = input;
+  const { ownerId, slug, preferredRestaurantId, page, pageSize } = input;
 
-  const { data: restaurant } = await supabase
-    .from("restaurants")
-    .select("id, slug, is_published, name")
-    .eq("owner_id", ownerId)
-    .maybeSingle();
-  if (!restaurant) return null;
+  const restaurant = await getActiveRestaurant(supabase, ownerId, preferredRestaurantId, slug);
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
@@ -147,7 +145,12 @@ export async function getDashboardAnalytics(input: {
 
   const scanRows = (scansRes.data ?? []).map((row) => ({ scanned_at: row.scanned_at }));
   return {
-    restaurant,
+    restaurant: {
+      id: restaurant.id,
+      slug: restaurant.slug,
+      name: restaurant.name,
+      is_published: restaurant.is_published
+    },
     kpis: {
       totalScans: scanCountRes.count ?? 0,
       menuItems: menuCountRes.count ?? 0,
@@ -159,4 +162,3 @@ export async function getDashboardAnalytics(input: {
     totalRecentScans: recentPageRes.count ?? 0
   };
 }
-

@@ -14,6 +14,9 @@ export interface Database {
           is_published: boolean;
           theme_color: string | null;
           table_count: number | null;
+          gst_number: string | null;
+          gst_rate: number | null;
+          enable_gst: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -29,6 +32,9 @@ export interface Database {
           is_published?: boolean;
           theme_color?: string | null;
           table_count?: number | null;
+          gst_number?: string | null;
+          gst_rate?: number | null;
+          enable_gst?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -43,6 +49,9 @@ export interface Database {
           is_published?: boolean;
           theme_color?: string | null;
           table_count?: number | null;
+          gst_number?: string | null;
+          gst_rate?: number | null;
+          enable_gst?: boolean;
           updated_at?: string;
         };
         Relationships: [];
@@ -141,18 +150,45 @@ export interface Database {
           id: string;
           restaurant_id: string;
           user_id: string;
-          role: "manager" | "viewer";
+          role: "manager" | "viewer" | "kitchen" | "waiter" | "cashier";
           created_at: string;
         };
         Insert: {
           id?: string;
           restaurant_id: string;
           user_id: string;
-          role: "manager" | "viewer";
+          role: "manager" | "viewer" | "kitchen" | "waiter" | "cashier";
           created_at?: string;
         };
         Update: {
-          role?: "manager" | "viewer";
+          role?: "manager" | "viewer" | "kitchen" | "waiter" | "cashier";
+        };
+        Relationships: [];
+      };
+      tables: {
+        Row: {
+          id: string;
+          restaurant_id: string;
+          table_number: string;
+          capacity: number;
+          status: "vacant" | "occupied" | "billing" | "reserved";
+          current_order_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          restaurant_id: string;
+          table_number: string;
+          capacity?: number;
+          status?: "vacant" | "occupied" | "billing" | "reserved";
+          current_order_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          table_number?: string;
+          capacity?: number;
+          status?: "vacant" | "occupied" | "billing" | "reserved";
+          current_order_id?: string | null;
         };
         Relationships: [];
       };

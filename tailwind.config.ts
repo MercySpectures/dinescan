@@ -1,30 +1,34 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
         navy: {
-          900: "#0A0F1C"
+          50: "#F0F4F8",
+          100: "#D9E2EC",
+          800: "#102A43",
+          900: "#070B14",
+          950: "#03060D"
         },
         primary: {
-          DEFAULT: "#4F46E5", // Indigo 600
-          hover: "#4338CA",
-          light: "#EEF2FF"
+          DEFAULT: "#10B981",
+          hover: "#059669",
+          light: "#ECFDF5"
         },
-        background: {
-          DEFAULT: "#F9FAFB",
-          card: "rgba(255, 255, 255, 0.8)"
-        }
+        darkBg: "#0B0F19",
+        darkCard: "#111827",
+        darkBorder: "#1F2937"
       },
       fontFamily: {
         display: ["var(--font-syne)"],
         body: ["var(--font-dm-sans)"],
       },
       boxShadow: {
-        glass: "0 8px 32px 0 rgba(31, 38, 135, 0.05)",
-        "glass-sm": "0 4px 12px 0 rgba(31, 38, 135, 0.03)",
+        glass: "0 8px 32px 0 rgba(0, 0, 0, 0.08)",
+        "glass-sm": "0 4px 12px 0 rgba(0, 0, 0, 0.04)",
         card: "0 1px 3px rgba(0,0,0,0.02), 0 10px 40px -10px rgba(0,0,0,0.05)",
       },
       backgroundImage: {

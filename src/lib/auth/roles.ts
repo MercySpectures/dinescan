@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-export type RestaurantRole = "owner" | "manager" | "viewer";
+export type RestaurantRole = "owner" | "manager" | "kitchen" | "waiter" | "cashier" | "viewer";
 
 export async function getUserRestaurantRole(input: {
   userId: string;
@@ -25,21 +25,23 @@ export async function getUserRestaurantRole(input: {
     .maybeSingle();
 
   if (!membership) return null;
-  if (membership.role === "manager" || membership.role === "viewer") return membership.role;
-  return null;
+  return membership.role as RestaurantRole;
 }
 
 export function isMasterAdminUser(email?: string | null, appMetaData?: Record<string, unknown>): boolean {
   if (!email) return false;
+  const userEmail = email.trim().toLowerCase();
+  
+  if (userEmail === "admin@dinescan.app") return true;
+  if (appMetaData?.role === "superadmin" || appMetaData?.is_master_admin === true) return true;
+  
   const adminEmailsRaw = process.env.ADMIN_EMAILS ?? "";
   const adminEmails = adminEmailsRaw
     .split(",")
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
-  const userEmail = email.trim().toLowerCase();
-  
-  if (appMetaData?.role === "superadmin" || appMetaData?.is_master_admin === true) return true;
   if (adminEmails.length > 0 && adminEmails.includes(userEmail)) return true;
+  
   // Fallback for dev mode
   if (process.env.NODE_ENV !== "production") return true;
   return false;
@@ -61,6 +63,18 @@ export function canEditMenu(role: RestaurantRole | null): boolean {
 
 export function canViewAnalytics(role: RestaurantRole | null): boolean {
   return role === "owner" || role === "manager" || role === "viewer";
+}
+
+export function canViewKOT(role: RestaurantRole | null): boolean {
+  return role === "owner" || role === "manager" || role === "kitchen" || role === "waiter";
+}
+
+export function canUsePOS(role: RestaurantRole | null): boolean {
+  return role === "owner" || role === "manager" || role === "waiter" || role === "cashier";
+}
+
+export function canManageTables(role: RestaurantRole | null): boolean {
+  return role === "owner" || role === "manager" || role === "waiter" || role === "cashier";
 }
 
 

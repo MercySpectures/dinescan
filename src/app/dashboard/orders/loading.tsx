@@ -1,12 +1,19 @@
-export default function GenericLoading() {
+export default function OrdersLoading() {
   return (
-    <div className="space-y-6 max-w-4xl animate-fade-up">
-      <div className="skeleton h-10 w-48 rounded-lg" />
-      <div className="skeleton h-[400px] w-full rounded-2xl" />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="skeleton h-32 rounded-xl" />
-        <div className="skeleton h-32 rounded-xl" />
+    <div className="space-y-6 animate-pulse">
+      <div className="flex justify-between items-center">
+        <div className="h-9 w-48 bg-slate-200 dark:bg-slate-800/60 rounded-xl" />
+        <div className="h-9 w-32 bg-slate-200 dark:bg-slate-800/60 rounded-xl" />
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="h-24 bg-slate-200 dark:bg-slate-800/60 rounded-2xl" />
+        <div className="h-24 bg-slate-200 dark:bg-slate-800/60 rounded-2xl" />
+        <div className="h-24 bg-slate-200 dark:bg-slate-800/60 rounded-2xl" />
+        <div className="h-24 bg-slate-200 dark:bg-slate-800/60 rounded-2xl" />
+      </div>
+
+      <div className="h-96 bg-slate-200 dark:bg-slate-800/60 rounded-2xl w-full" />
     </div>
   );
 }

@@ -32,5 +32,6 @@ export function getInitials(name: string): string {
 }
 
 export function getMenuUrl(slug: string): string {
-  return `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/menu/${slug}`;
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  return `${baseUrl}/menu/${slug}`;
 }

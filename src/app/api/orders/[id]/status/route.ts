@@ -3,6 +3,37 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateOrderStatusSchema } from "@/lib/validations/orders";
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const adminSupabase = createAdminClient();
+
+    const { data: order, error } = await adminSupabase
+      .from("orders")
+      .select("id, restaurant_id, table_code, status, subtotal, service_charge, tax, total, created_at")
+      .eq("id", params.id)
+      .maybeSingle();
+
+    if (error || !order) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    const { data: orderItems } = await adminSupabase
+      .from("order_items")
+      .select("id, name, price, qty, note")
+      .eq("order_id", params.id);
+
+    return NextResponse.json({
+      ...order,
+      items: orderItems || []
+    });
+  } catch {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -28,7 +59,6 @@ export async function PATCH(
     const { status } = result.data;
 
     // We must ensure the user owns the restaurant that the order belongs to
-    // By selecting the order directly, RLS will fail naturally if they don't own it
     const { data: orderToUpdate, error: fetchError } = await supabase
       .from("orders")
       .select("id")

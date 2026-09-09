@@ -3,7 +3,11 @@
 @tailwind utilities;
 
 body {
-  @apply bg-[#F9FAFB] text-slate-800 font-body antialiased;
+  @apply bg-[#F8FAFC] text-slate-800 font-body antialiased transition-colors duration-300;
+}
+
+html.dark body {
+  @apply bg-[#0B0F19] text-slate-100;
 }
 
 /* Hide scrollbar globally */
@@ -16,7 +20,14 @@ body {
 }
 
 ::selection {
-  @apply bg-primary/20 text-primary;
+  @apply bg-emerald-500/20 text-emerald-500;
+}
+
+/* Suppress native browser password reveal & clear overlays */
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-credentials-auto-fill-button {
+  display: none !important;
 }
 
 @media print {
@@ -31,56 +42,96 @@ body {
 
 @keyframes marquee {
   0% {
-    transform: translateX(0);
+    transform: translateX(0%);
   }
-
   100% {
     transform: translateX(-50%);
   }
 }
 
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 @layer components {
 
-  /* Premium interactive buttons */
+  /* Premium interactive buttons - Refined Elegant Typography */
   .btn-primary {
-    @apply bg-primary hover:bg-primary-hover text-white shadow-[0_4px_14px_0_rgba(79,70,229,0.39)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.23)] disabled:shadow-none hover:-translate-y-[1px] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-5 py-2.5 text-sm font-semibold font-display tracking-wide transition-all duration-200 border border-transparent;
+    @apply bg-emerald-500 hover:bg-emerald-600 text-slate-950 shadow-sm hover:shadow-md disabled:shadow-none hover:-translate-y-[1px] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-4 py-2 text-xs sm:text-sm font-semibold tracking-normal transition-all duration-150 border border-transparent flex items-center justify-center gap-1.5 cursor-pointer;
   }
 
   .btn-outline {
-    @apply bg-white/50 backdrop-blur-md border border-slate-200 text-slate-700 hover:border-primary hover:text-primary hover:bg-white hover:shadow-glass-sm hover:-translate-y-[1px] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-5 py-2.5 text-sm font-semibold font-display tracking-wide transition-all duration-200;
+    @apply bg-white border border-slate-200 text-slate-700 hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50/50 hover:shadow-sm hover:-translate-y-[1px] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-4 py-2 text-xs sm:text-sm font-medium tracking-normal transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer;
+  }
+
+  html.dark .btn-outline {
+    @apply bg-[#111827] border-[#1F2937] text-slate-200 hover:border-emerald-500 hover:text-emerald-400 hover:bg-[#1A2337];
   }
 
   .btn-ghost {
-    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200;
+    @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60 rounded-xl px-3 py-1.5 text-xs sm:text-sm font-medium transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer;
   }
 
-  /* Inputs \\& Form */
+  html.dark .btn-ghost {
+    @apply text-slate-400 hover:bg-[#1F2937] hover:text-slate-100;
+  }
+
+  /* Inputs & Form */
   .input {
-    @apply bg-white/80 backdrop-blur-sm border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-4 focus:ring-primary/10 w-full outline-none transition-all duration-200 placeholder:text-slate-400;
+    @apply bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 w-full outline-none transition-all duration-200 placeholder:text-slate-400 text-slate-900;
+  }
+
+  html.dark .input {
+    @apply bg-[#111827] border-[#1F2937] text-slate-100 placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20;
   }
 
   /* Glassmorphism Cards */
   .card {
-    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-card rounded-2xl relative overflow-hidden;
+    @apply bg-white border border-slate-200/80 shadow-card rounded-2xl relative overflow-hidden transition-colors duration-200;
   }
 
+  html.dark .card {
+    @apply bg-[#111827] border-[#1F2937] shadow-2xl text-slate-100;
+  }
 
   /* Badges */
   .badge-veg {
     @apply bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[11px] uppercase tracking-wider font-bold px-2.5 py-0.5;
   }
 
+  html.dark .badge-veg {
+    @apply bg-emerald-950/60 text-emerald-300 border-emerald-800/60;
+  }
+
   .badge-nonveg {
     @apply bg-red-50 text-red-700 border border-red-200 rounded-full text-[11px] uppercase tracking-wider font-bold px-2.5 py-0.5;
   }
 
+  html.dark .badge-nonveg {
+    @apply bg-red-950/60 text-red-300 border-red-800/60;
+  }
+
   /* Typography */
   .page-title {
-    @apply font-display font-bold text-3xl md:text-4xl text-slate-900 tracking-tight;
+    @apply font-display font-bold text-2xl md:text-3xl text-slate-900 tracking-tight;
+  }
+
+  html.dark .page-title {
+    @apply text-white;
   }
 
   /* Skeleton Loading */
   .skeleton {
     @apply animate-pulse rounded-xl bg-slate-200/60;
+  }
+
+  html.dark .skeleton {
+    @apply bg-slate-800/60;
   }
 }

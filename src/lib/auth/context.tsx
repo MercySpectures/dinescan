@@ -22,15 +22,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadSession = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user ?? null);
-      setLoading(false);
-    };
-    void loadSession();
+    // 1. Instant local session check to eliminate page load delay
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        setLoading(false);
+      }
+    }).catch(() => {});
 
+    // 2. Verified user check in background
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user ?? null);
+      setLoading(false);
+    }).catch(() => {
+      setLoading(false);
+    });
+
+    // 3. Listen for auth state changes
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      setLoading(false);
     });
 
     return () => subscription.subscription.unsubscribe();

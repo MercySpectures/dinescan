@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { resolveDateRange } from "@/lib/data/dashboard";
 
 function escapeCsv(value: string): string {
-  const escaped = value.replace(/"/g, "\"\"");
+  const escaped = value.replace(/"/g, '""');
   return `"${escaped}"`;
 }
 
@@ -54,4 +54,3 @@ export async function GET(request: NextRequest) {
     }
   });
 }
-
