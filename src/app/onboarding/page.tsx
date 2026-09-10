@@ -24,7 +24,10 @@ import {
   Palette,
   ExternalLink,
   Copy,
-  LayoutDashboard
+  LayoutDashboard,
+  Upload,
+  ImageIcon,
+  X
 } from "lucide-react";
 
 interface OnboardingState {
@@ -34,6 +37,7 @@ interface OnboardingState {
   phone: string;
   address: string;
   themeColor: string;
+  logoUrl?: string;
   tableCount: number;
   enableGst: boolean;
   gstRate: number;
@@ -52,6 +56,7 @@ export default function OnboardingPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [logoPreview, setLogoPreview] = useState<string>("");
 
   const [form, setForm] = useState<OnboardingState>({
     name: "Silsila Restaurant",
@@ -60,6 +65,7 @@ export default function OnboardingPage() {
     phone: "+91 98765 43210",
     address: "124 Culinary Blvd, Metro",
     themeColor: "#10B981",
+    logoUrl: "",
     tableCount: 12,
     enableGst: true,
     gstRate: 5,
@@ -192,6 +198,7 @@ export default function OnboardingPage() {
             description: form.description || null,
             phone: form.phone || null,
             address: form.address || null,
+            logo_url: form.logoUrl || logoPreview || null,
             theme_color: form.themeColor,
             is_published: true
           })
@@ -208,6 +215,7 @@ export default function OnboardingPage() {
             description: form.description || "Freshly prepared dining menu",
             phone: form.phone || null,
             address: form.address || null,
+            logo_url: form.logoUrl || logoPreview || null,
             theme_color: form.themeColor,
             is_published: true
           })
@@ -456,6 +464,88 @@ export default function OnboardingPage() {
                 <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-3 text-xs font-mono text-slate-300">
                   <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span className="truncate">dinescan.app/menu/<strong className="text-emerald-400 font-bold">{liveSlug}</strong></span>
+                </div>
+              </div>
+
+              {/* Logo Upload Card with Live Preview */}
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center justify-between">
+                  <span>Restaurant Brand Logo</span>
+                  <span className="text-[10px] text-slate-500 font-normal">PNG, JPG, WebP up to 5MB</span>
+                </label>
+                <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl border border-dashed border-slate-700 bg-slate-950/60 hover:border-emerald-500/50 transition-colors">
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0 shadow-md">
+                    {logoPreview || form.logoUrl ? (
+                      <>
+                        <Image
+                          src={logoPreview || form.logoUrl || ""}
+                          alt="Restaurant Logo Preview"
+                          width={80}
+                          height={80}
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLogoPreview("");
+                            setForm((prev) => ({ ...prev, logoUrl: "" }));
+                          }}
+                          className="absolute top-1 right-1 p-1 bg-black/70 hover:bg-rose-600 text-white rounded-full transition-colors"
+                          title="Remove logo"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </>
+                    ) : (
+                      <div className="text-center p-2">
+                        <ImageIcon className="w-6 h-6 text-slate-600 mx-auto" />
+                        <span className="text-[9px] text-slate-500 font-bold mt-1 block">No Logo</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 text-center sm:text-left space-y-2 w-full">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      <label className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl cursor-pointer flex items-center gap-1.5 shadow-sm transition-all">
+                        <Upload className="w-3.5 h-3.5" /> Select Image File
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                toast.error("Image file size should be less than 5MB");
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                const result = reader.result as string;
+                                setLogoPreview(result);
+                                setForm((prev) => ({ ...prev, logoUrl: result }));
+                                toast.success("Logo uploaded!");
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </label>
+                      <span className="text-xs text-slate-500">or paste URL below</span>
+                    </div>
+
+                    <input
+                      type="url"
+                      value={form.logoUrl || ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setForm((prev) => ({ ...prev, logoUrl: val }));
+                        setLogoPreview(val);
+                      }}
+                      placeholder="https://example.com/your-restaurant-logo.png"
+                      className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
                 </div>
               </div>
 

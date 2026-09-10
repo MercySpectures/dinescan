@@ -23,8 +23,9 @@ const config: Config = {
         darkBorder: "#1F2937"
       },
       fontFamily: {
-        display: ["var(--font-syne)"],
-        body: ["var(--font-dm-sans)"],
+        sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        display: ["var(--font-inter)", "var(--font-syne)", "sans-serif"],
+        body: ["var(--font-inter)", "var(--font-dm-sans)", "sans-serif"],
       },
       boxShadow: {
         glass: "0 8px 32px 0 rgba(0, 0, 0, 0.08)",

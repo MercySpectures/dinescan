@@ -309,13 +309,14 @@ export default function MarketingPage() {
 
           <nav className="hidden items-center gap-6 text-xs font-semibold text-slate-600 dark:text-slate-400 lg:flex">
             <a href="#demo" className="hover:text-emerald-500 transition-colors">Live Demo</a>
-            <a href="#marquee" className="hover:text-emerald-500 transition-colors">Partners</a>
             <a href="#stacked" className="hover:text-emerald-500 transition-colors">Workflows</a>
             <a href="#features" className="hover:text-emerald-500 transition-colors">Features</a>
             <a href="#roi" className="hover:text-emerald-500 transition-colors">ROI Calculator</a>
             <a href="#pricing" className="hover:text-emerald-500 transition-colors">Pricing</a>
             <a href="#faq" className="hover:text-emerald-500 transition-colors">FAQ</a>
-            <a href="#testimonials" className="hover:text-emerald-500 transition-colors">Reviews</a>
+            <Link href="/contact" className="text-slate-900 dark:text-white font-bold hover:text-emerald-500 transition-colors">
+              Contact &amp; Demo
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -949,6 +950,7 @@ export default function MarketingPage() {
             <ul className="space-y-2 text-slate-600 dark:text-slate-400">
               <li><Link href="/menu/demo" className="hover:text-emerald-500 transition-colors">Cafes & QSRs</Link></li>
               <li><Link href="/auth/register" className="hover:text-emerald-500 transition-colors">Fine Dining & Bars</Link></li>
+              <li><Link href="/contact" className="hover:text-emerald-500 font-semibold transition-colors">Contact Hospitality Team</Link></li>
               <li><Link href="/admin" className="hover:text-emerald-500 transition-colors">Multi-Chain Master Admin</Link></li>
               <li><Link href="/auth/login" className="hover:text-emerald-500 transition-colors">1-Click Demo Login</Link></li>
             </ul>

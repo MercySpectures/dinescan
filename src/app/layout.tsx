@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { DM_Sans, Syne } from "next/font/google";
+import { Inter, Syne, DM_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth/context";
 
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const syne = Syne({ subsets: ["latin"], variable: "--font-syne" });
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 
@@ -61,7 +62,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="dark">
-      <body className={`${syne.variable} ${dmSans.variable} bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 antialiased`}>
+      <body className={`${inter.variable} ${syne.variable} ${dmSans.variable} font-sans bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 antialiased`}>
         <AuthProvider>
           {children}
           <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
