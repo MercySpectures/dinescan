@@ -61,7 +61,25 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem('dinescan_theme') || localStorage.getItem('dinescan_customer_theme');
+                  if (t === 'light') {
+                    document.documentElement.classList.remove('dark');
+                  } else if (t === 'dark') {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `
+          }}
+        />
+      </head>
       <body className={`${inter.variable} ${syne.variable} ${dmSans.variable} font-sans bg-[#F8FAFC] dark:bg-[#0B0F19] text-slate-800 dark:text-slate-100 antialiased`}>
         <AuthProvider>
           {children}

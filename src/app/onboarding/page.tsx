@@ -592,35 +592,6 @@ export default function OnboardingPage() {
                   </div>
                 </div>
               </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block flex items-center gap-1.5">
-                  <Palette className="w-3.5 h-3.5 text-emerald-400" /> Choose Brand Accent Color
-                </label>
-                <div className="grid grid-cols-5 gap-3">
-                  {[
-                    { name: "Emerald", color: "#10B981" },
-                    { name: "Sapphire", color: "#3B82F6" },
-                    { name: "Crimson", color: "#EF4444" },
-                    { name: "Amber", color: "#F59E0B" },
-                    { name: "Obsidian", color: "#6B7280" }
-                  ].map((item) => (
-                    <button
-                      key={item.color}
-                      type="button"
-                      onClick={() => setForm((prev) => ({ ...prev, themeColor: item.color }))}
-                      className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        form.themeColor === item.color
-                          ? "border-emerald-500 bg-emerald-500/10 ring-2 ring-emerald-500/50"
-                          : "border-slate-800 bg-slate-950 hover:border-slate-700"
-                      }`}
-                    >
-                      <span className="w-5 h-5 rounded-full shadow-md" style={{ backgroundColor: item.color }} />
-                      <span className="text-[10px] font-bold text-slate-300">{item.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
             <div className="pt-4 flex justify-end">

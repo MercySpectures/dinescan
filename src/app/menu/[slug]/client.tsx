@@ -163,11 +163,13 @@ export default function PublicMenuClient({ items, restaurant }: PublicMenuClient
   const [customerTheme, setCustomerTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
-    const saved = localStorage.getItem("dinescan_customer_theme") as "dark" | "light" | null;
-    if (saved) {
-      setCustomerTheme(saved);
-    } else if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
-      setCustomerTheme("light");
+    const saved = (localStorage.getItem("dinescan_customer_theme") || localStorage.getItem("dinescan_theme")) as "dark" | "light" | null;
+    const initialTheme = saved || (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    setCustomerTheme(initialTheme);
+    if (initialTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
@@ -175,6 +177,12 @@ export default function PublicMenuClient({ items, restaurant }: PublicMenuClient
     setCustomerTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
       localStorage.setItem("dinescan_customer_theme", next);
+      localStorage.setItem("dinescan_theme", next);
+      if (next === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
       return next;
     });
   };

@@ -485,18 +485,6 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              <div>
-                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 block">Primary Theme Color</label>
-                <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 p-2 rounded-xl border border-slate-200 dark:border-slate-800 w-fit">
-                  <input
-                    type="color"
-                    className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0 p-0 shadow-none"
-                    value={form.themeColor}
-                    onChange={(event) => setForm((prev) => ({ ...prev, themeColor: event.target.value }))}
-                  />
-                  <span className="font-mono text-sm text-slate-700 dark:text-slate-300 uppercase pr-3">{form.themeColor}</span>
-                </div>
-              </div>
 
               <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                 <div>
