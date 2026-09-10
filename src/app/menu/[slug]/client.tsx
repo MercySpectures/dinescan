@@ -78,9 +78,21 @@ const fallbackCategoryImages: Record<string, string> = {
   desserts: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=800&auto=format&fit=crop&q=80"
 };
 
+function isValidImageUrl(url?: string | null): boolean {
+  if (!url) return false;
+  const trimmed = url.trim();
+  if (trimmed.length < 5) return false;
+  if (trimmed.includes("placehold.co")) return false;
+  return (
+    trimmed.startsWith("http://") ||
+    trimmed.startsWith("https://") ||
+    (trimmed.startsWith("/") && !trimmed.startsWith("//"))
+  );
+}
+
 function resolveDishImage(item: PublicItem): string {
-  if (item.imageUrl && !item.imageUrl.includes("placehold.co")) {
-    return item.imageUrl;
+  if (isValidImageUrl(item.imageUrl)) {
+    return item.imageUrl!.trim();
   }
   const key = (item.category || "").toLowerCase().trim();
   return (
@@ -98,7 +110,7 @@ function DishImage({ item }: { item: PublicItem }) {
     setHasFailed(false);
   }, [item]);
 
-  if (hasFailed) {
+  if (hasFailed || !isValidImageUrl(imgSrc)) {
     return (
       <div className="w-full h-full bg-gradient-to-br from-slate-800 via-[#111827] to-slate-900 flex flex-col items-center justify-center text-slate-400 p-4 text-center">
         <Utensils className="w-8 h-8 text-emerald-500 mb-2 opacity-80" />
@@ -129,10 +141,10 @@ function DishImage({ item }: { item: PublicItem }) {
 function RestaurantBrandLogo({ name, logoUrl }: { name: string; logoUrl?: string | null }) {
   const [hasError, setHasError] = useState(false);
 
-  if (logoUrl && !logoUrl.includes("placehold.co") && !hasError) {
+  if (isValidImageUrl(logoUrl) && !hasError) {
     return (
       <Image
-        src={logoUrl}
+        src={logoUrl!.trim()}
         alt={name}
         width={112}
         height={112}
@@ -421,7 +433,7 @@ export default function PublicMenuClient({ items, restaurant }: PublicMenuClient
       }
 
       const data = await res.json();
-      const newOrderId = data.id || "ORD-" + Math.floor(100000 + Math.random() * 900000);
+      const newOrderId = data.order_id || data.id || "ORD-" + Math.floor(100000 + Math.random() * 900000);
 
       setOrderId(newOrderId);
       setOrderStatus("new");
