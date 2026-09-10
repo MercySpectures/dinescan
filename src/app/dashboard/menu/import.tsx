@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Download, Upload, FileSpreadsheet } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 
 export default function ImportCSV({
   restaurantId,

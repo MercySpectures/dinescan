@@ -31,10 +31,8 @@ import {
   Moon,
   Percent,
   Star,
-  ExternalLink,
   ChefHat,
   ArrowRight,
-  Flame,
   Check
 } from "lucide-react";
 
@@ -225,8 +223,8 @@ export default function PublicMenuClient({ items, restaurant }: PublicMenuClient
   const [paymentMode, setPaymentMode] = useState<"upi" | "cash" | "card">("upi");
 
   // Tip options: 0%, 5%, 10%, 15%, or custom
-  const [tipOption, setTipOption] = useState<number>(10);
-  const [customTip, setCustomTip] = useState<string>("");
+  const [tipOption] = useState<number>(10);
+  const [customTip] = useState<string>("");
 
   // Live Order Tracking State
   const [orderId, setOrderId] = useState<string>("");

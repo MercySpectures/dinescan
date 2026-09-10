@@ -40,6 +40,38 @@ interface ItemFormState {
   is_featured: boolean;
 }
 
+const DEFAULT_FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=120&auto=format&fit=crop&q=80";
+
+function SafeDishThumb({ src, alt }: { src: string | null | undefined; alt: string }) {
+  const isValid = Boolean(
+    src &&
+      (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) &&
+      !src.includes("placehold.co")
+  );
+  const [imgSrc, setImgSrc] = useState(isValid ? (src as string) : DEFAULT_FALLBACK_IMAGE);
+
+  useEffect(() => {
+    const valid = Boolean(
+      src &&
+        (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) &&
+        !src.includes("placehold.co")
+    );
+    setImgSrc(valid ? (src as string) : DEFAULT_FALLBACK_IMAGE);
+  }, [src]);
+
+  return (
+    <Image
+      src={imgSrc}
+      alt={alt}
+      width={48}
+      height={48}
+      className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+      onError={() => setImgSrc(DEFAULT_FALLBACK_IMAGE)}
+    />
+  );
+}
+
 export default function MenuBuilderPage() {
   const supabase = useMemo(() => createClient(), []);
   const [restaurantId, setRestaurantId] = useState<string>("");
@@ -276,13 +308,7 @@ export default function MenuBuilderPage() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={item.image_url || "https://placehold.co/60x60/png"}
-                      alt={item.name}
-                      width={48}
-                      height={48}
-                      className="h-12 w-12 rounded-lg object-cover border border-slate-200 dark:border-slate-700"
-                    />
+                    <SafeDishThumb src={item.image_url} alt={item.name} />
                     <div>
                       <p className="font-semibold text-sm text-slate-900 dark:text-white">{item.name}</p>
                       <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1">{item.description ?? ""}</p>

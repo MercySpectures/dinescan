@@ -160,7 +160,12 @@ export async function POST(req: NextRequest) {
       }
 
       let imageUrl = (imgIdx !== -1 && cols[imgIdx]?.replace(/^"|"$/g, "").trim()) || "";
-      if (!imageUrl || imageUrl.includes("placehold.co")) {
+      const isProperUrl =
+        imageUrl.startsWith("http://") ||
+        imageUrl.startsWith("https://") ||
+        imageUrl.startsWith("/");
+
+      if (!imageUrl || !isProperUrl || imageUrl.includes("placehold.co")) {
         const catKey = category.toLowerCase().trim();
         imageUrl = categoryDefaultImages[catKey] || (isVeg ? categoryDefaultImages.starters : categoryDefaultImages.mains);
       }

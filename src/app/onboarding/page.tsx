@@ -21,7 +21,6 @@ import {
   Phone,
   MapPin,
   QrCode,
-  Palette,
   ExternalLink,
   Copy,
   LayoutDashboard,
