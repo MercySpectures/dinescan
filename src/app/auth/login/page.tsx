@@ -53,7 +53,11 @@ export default function LoginPage() {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword(form);
+    const cleanEmail = form.email.trim().toLowerCase();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: cleanEmail,
+      password: form.password
+    });
     if (error) {
       if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
         toast.error("Supabase connection offline. Please configure NEXT_PUBLIC_SUPABASE_URL in .env.local.");

@@ -6,8 +6,9 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => ({}));
     const { email, password, restaurantName } = body;
+    const cleanEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
 
-    if (!email || typeof email !== "string" || !email.includes("@")) {
+    if (!cleanEmail || !cleanEmail.includes("@")) {
       return NextResponse.json({ error: "Valid email address is required" }, { status: 400 });
     }
 
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     let authUser = null;
 
     const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
-      email,
+      email: cleanEmail,
       password,
       email_confirm: true,
       user_metadata: { restaurant_name: cleanRestName }
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. Create Restaurant Record
-    const baseSlug = slugify(cleanRestName || email.split("@")[0] || "restaurant");
+    const baseSlug = slugify(cleanRestName || cleanEmail.split("@")[0] || "restaurant");
     const slug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const { data: restaurant, error: restError } = await supabaseAdmin

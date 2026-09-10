@@ -73,12 +73,19 @@ export default function RegisterPage() {
     }
     setLoading(true);
 
+    const cleanEmail = form.email.trim().toLowerCase();
+    const cleanRestaurantName = form.restaurantName.trim();
+
     try {
       // 1. Primary: Server-side registration endpoint with auto-confirmation & starter menu seed
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+        body: JSON.stringify({
+          restaurantName: cleanRestaurantName,
+          email: cleanEmail,
+          password: form.password
+        })
       });
 
       const resData = await res.json().catch(() => ({}));
@@ -88,7 +95,7 @@ export default function RegisterPage() {
         console.warn("Server registration notice:", resData.error);
         
         const { data, error } = await supabase.auth.signUp({
-          email: form.email,
+          email: cleanEmail,
           password: form.password
         });
 
@@ -111,7 +118,7 @@ export default function RegisterPage() {
 
       // 2. Sign in to establish active session
       const { error: signInErr } = await supabase.auth.signInWithPassword({
-        email: form.email,
+        email: cleanEmail,
         password: form.password
       });
 
