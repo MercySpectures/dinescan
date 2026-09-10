@@ -184,7 +184,7 @@ export default async function PublicMenuPage({ params, searchParams }: PublicMen
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl">
+    <div className="min-h-screen w-full bg-[#F8FAFC] dark:bg-[#0B0F19]">
       <PublicMenuClient
         items={items}
         restaurant={{
@@ -197,6 +197,6 @@ export default async function PublicMenuPage({ params, searchParams }: PublicMen
           theme_color: effectiveRestaurant.theme_color
         }}
       />
-    </main>
+    </div>
   );
 }
